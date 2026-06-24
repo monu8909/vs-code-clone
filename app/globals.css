@@ -3,13 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans       : var(--font-geist-sans);
+  --font-mono       : var(--font-geist-mono);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -20,7 +21,83 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background : var(--background);
+  color      : var(--foreground);
+  font-family: cursive;
+  overflow   : hidden;
+}
+
+.monaco-editor {
+  width: 500px
+}
+
+/* Global Scrollbar */
+/* Vertical scrollbar visible */
+::-webkit-scrollbar:vertical {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track:vertical {
+  background: #1e1e1e;
+}
+
+::-webkit-scrollbar-thumb:vertical {
+  background   : #424242;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:vertical:hover {
+  background: #5a5a5a;
+}
+
+/* Horizontal scrollbar hidden */
+::-webkit-scrollbar:horizontal {
+  height: 0px;
+}
+
+::-webkit-scrollbar-track:horizontal {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb:horizontal {
+  background: transparent;
+}
+
+/* Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #424242 #1e1e1e;
+}
+
+.tabs-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  /* Firefox */
+  scrollbar-width: none;
+}
+
+/* Chrome, Edge, Safari */
+.tabs-container::-webkit-scrollbar {
+  display: none;
+}
+
+.forScrollbar {
+  overflow-x: scroll;
+  overflow-y: hidden;
+}
+
+.forScrollbar::-webkit-scrollbar {
+  scrollbar-width: none;
+  height         : 0px !important;
+}
+
+.forScrollbar::-webkit-scrollbar-track {
+  width : auto;
+  height: 0px !important;
+}
+
+.forScrollbar::-webkit-scrollbar-thumb {
+  width : auto;
+  height: 0px !important;
 }
