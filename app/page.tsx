@@ -1,35 +1,47 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import CodeEditor from "../component/Editor/CodeEditor";
 import Sidebar from "../component/Sidebar/Sidebar";
 import Header from "../component/Header/Header";
 import Editor from "../component/Header/Editor";
+import { useDispatch, useSelector } from "react-redux";
+import ReduxProvider from "@/redux/provider";
+import { commandExecutor } from "../services/commandExecutor";
+type FileNode = {
+  name: string;
+  type: "file" | "folder";
+  handle?: FileSystemFileHandle;
+  children?: FileNode[];
+};
+type TreeNode = {
+  name: string;
+  type: "file" | "folder";
+  handle?: FileSystemDirectoryHandle | FileSystemFileHandle;
+  children?: TreeNode[];
+  loaded?: boolean;
+};
+type OpenFile = {
+  id: string;
+  name: string;
+  content: string;
+  language: string;
+};
 export default function Home() {
-  type FileNode = {
-    name: string;
-    type: "file" | "folder";
-    handle?: FileSystemFileHandle;
-    children?: FileNode[];
-  };
-  type TreeNode = {
-    name: string;
-    type: "file" | "folder";
-    handle?: FileSystemDirectoryHandle | FileSystemFileHandle;
-    children?: TreeNode[];
-    loaded?: boolean;
-  };
-  type OpenFile = {
-    id: string;
-    name: string;
-    content: string;
-    language: string;
-  };
+  const dispatch = useDispatch();
   const [fileTree, setFileTree] = useState<TreeNode[]>([]);
-  const [editorContent, setEditorContent] = useState("");
   const [isOpening, setIsOpening] = useState(false);
-
   const [openFiles, setOpenFiles] = useState<OpenFile[]>([]);
   const [activeFileId, setActiveFileId] = useState("");
+
+  const selectedCommand = useSelector(
+    (state: any) => state.menu.selectedCommand,
+  );
+
+  useEffect(() => {
+    if (!selectedCommand) return;
+
+    commandExecutor(selectedCommand, dispatch, openFolder);
+  }, [selectedCommand]);
   const readRootDirectory = async (
     dirHandle: FileSystemDirectoryHandle,
   ): Promise<TreeNode[]> => {
@@ -104,31 +116,33 @@ export default function Home() {
   };
   return (
     <main className="flex w-full flex-col items-center justify-between px-0 bg-white dark:bg-black sm:items-start">
-      <Header openFolder={openFolder} />
-      <div className="flex w-full h-[91vh] items-start pt-[40px]">
-        <Sidebar fileTree={fileTree} openFile={openFile} />
-        <div className="h-full w-[75%]">
-          <Editor
-            openFiles={openFiles}
-            language={
-              openFiles.find((file) => file.id === activeFileId)?.language ||
-              "typescript"
-            }
-            activeFile={activeFileId}
-            setActiveFile={setActiveFileId}
-            setOpenFiles={setOpenFiles}
-            theme="vs-dark"
-          />
-          <div className="flex-1 h-full">
-            <CodeEditor
+      <ReduxProvider>
+        <Header openFolder={openFolder} />
+        <div className="flex w-full h-[91vh] items-start pt-[40px]">
+          <Sidebar fileTree={fileTree} openFile={openFile} />
+          <div className="h-full w-[75%]">
+            <Editor
               openFiles={openFiles}
-              activeFileId={activeFileId}
-              setActiveFileId={setActiveFileId}
+              language={
+                openFiles.find((file) => file.id === activeFileId)?.language ||
+                "typescript"
+              }
+              activeFile={activeFileId}
+              setActiveFile={setActiveFileId}
               setOpenFiles={setOpenFiles}
+              theme="vs-dark"
             />
+            <div className="flex-1 h-full">
+              <CodeEditor
+                openFiles={openFiles}
+                activeFileId={activeFileId}
+                setActiveFileId={setActiveFileId}
+                setOpenFiles={setOpenFiles}
+              />
+            </div>
           </div>
         </div>
-      </div>
+      </ReduxProvider>
     </main>
   );
 }
