@@ -31,8 +31,6 @@ body {
   width: 500px
 }
 
-/* Global Scrollbar */
-/* Vertical scrollbar visible */
 ::-webkit-scrollbar:vertical {
   width: 8px;
 }

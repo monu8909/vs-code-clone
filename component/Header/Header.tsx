@@ -19,8 +19,7 @@ export default function Header({
   return (
     <header className="h-10 bg-[#181818] border-b border-zinc-800 w-full flex items-center justify-between px-3 absolute top-0 left-0 z-9000">
       <TopMenu openFolder={openFolder} />
-      {/* Left */}
-      {/* Center */}
+
       <div className="max-w-4xl w-full flex items-center gap-2">
         <div className="flex items-center gap-3">
           <ArrowLeft

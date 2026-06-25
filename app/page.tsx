@@ -40,7 +40,8 @@ export default function Home() {
     dirHandle: FileSystemDirectoryHandle,
   ): Promise<TreeNode[]> => {
     const items: TreeNode[] = [];
-    const iterator = (dirHandle as any).values?.() ?? (dirHandle as any).entries?.();
+    const iterator =
+      (dirHandle as any).values?.() ?? (dirHandle as any).entries?.();
 
     if (!iterator) {
       return items;
@@ -77,20 +78,6 @@ export default function Home() {
       setIsOpening(false);
     }
   };
-
-  // const openFile = async (fileHandle: FileSystemFileHandle) => {
-  //   try {
-  //     const file = await fileHandle.getFile();
-  //     const content = await file.text();
-
-  //     console.log(content);
-
-  //     setEditorContent(content);
-  //   } catch (error) {
-  //     console.error("Failed to read file:", error);
-  //   }
-  // };
-
   const openFile = async (fileHandle: FileSystemFileHandle) => {
     const file = await fileHandle.getFile();
     const content = await file.text();
