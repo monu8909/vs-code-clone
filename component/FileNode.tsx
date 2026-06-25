@@ -30,12 +30,19 @@ export function FileNode({
   console.log("level0----->", node?.node, isFolder, node.type);
   const loadChildren = async (folderHandle: FileSystemDirectoryHandle) => {
     const children: TreeNode[] = [];
+    const iterator = (folderHandle as any).values?.() ?? (folderHandle as any).entries?.();
 
-    for await (const entry of folderHandle.values()) {
+    if (!iterator) {
+      return children;
+    }
+
+    for await (const entry of iterator) {
+      const handle = Array.isArray(entry) ? entry[1] : entry;
+
       children.push({
-        name: entry.name,
-        type: entry.kind === "directory" ? "folder" : "file",
-        handle: entry,
+        name: handle.name,
+        type: handle.kind === "directory" ? "folder" : "file",
+        handle,
         loaded: false,
       });
     }

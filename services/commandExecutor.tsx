@@ -1,3 +1,5 @@
+import { toggleExplorer } from "../store/explorerSlice";
+
 export async function commandExecutor(
   command: string,
   dispatch: any,

@@ -2,11 +2,22 @@
   "name": "codepilot",
   "version": "0.1.0",
   "private": true,
+  "main": "electron/main.js",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "electron": "electron .",
     "lint": "eslint"
+  },
+   "build": {
+    "appId": "com.monu.codepilot",
+    "productName": "CodePilot",
+
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    }
   },
   "dependencies": {
     "@monaco-editor/react": "^4.7.0",
@@ -25,6 +36,8 @@
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "electron": "^42.5.0",
+    "electron-builder": "^26.15.3",
     "eslint": "^9",
     "eslint-config-next": "16.2.9",
     "tailwindcss": "^4",

@@ -5,14 +5,8 @@ import Sidebar from "../component/Sidebar/Sidebar";
 import Header from "../component/Header/Header";
 import Editor from "../component/Header/Editor";
 import { useDispatch, useSelector } from "react-redux";
-import ReduxProvider from "@/redux/provider";
 import { commandExecutor } from "../services/commandExecutor";
-type FileNode = {
-  name: string;
-  type: "file" | "folder";
-  handle?: FileSystemFileHandle;
-  children?: FileNode[];
-};
+
 type TreeNode = {
   name: string;
   type: "file" | "folder";
@@ -46,12 +40,19 @@ export default function Home() {
     dirHandle: FileSystemDirectoryHandle,
   ): Promise<TreeNode[]> => {
     const items: TreeNode[] = [];
+    const iterator = (dirHandle as any).values?.() ?? (dirHandle as any).entries?.();
 
-    for await (const entry of dirHandle.values()) {
+    if (!iterator) {
+      return items;
+    }
+
+    for await (const entry of iterator) {
+      const handle = Array.isArray(entry) ? entry[1] : entry;
+
       items.push({
-        name: entry.name,
-        type: entry.kind === "directory" ? "folder" : "file",
-        handle: entry,
+        name: handle.name,
+        type: handle.kind === "directory" ? "folder" : "file",
+        handle,
         loaded: false,
       });
     }
@@ -116,33 +117,31 @@ export default function Home() {
   };
   return (
     <main className="flex w-full flex-col items-center justify-between px-0 bg-white dark:bg-black sm:items-start">
-      <ReduxProvider>
-        <Header openFolder={openFolder} />
-        <div className="flex w-full h-[91vh] items-start pt-[40px]">
-          <Sidebar fileTree={fileTree} openFile={openFile} />
-          <div className="h-full w-[75%]">
-            <Editor
+      <Header openFolder={openFolder} />
+      <div className="flex w-full h-[91vh] items-start pt-[40px]">
+        <Sidebar fileTree={fileTree} openFile={openFile} />
+        <div className="h-full w-[75%]">
+          <Editor
+            openFiles={openFiles}
+            language={
+              openFiles.find((file) => file.id === activeFileId)?.language ||
+              "typescript"
+            }
+            activeFile={activeFileId}
+            setActiveFile={setActiveFileId}
+            setOpenFiles={setOpenFiles}
+            theme="vs-dark"
+          />
+          <div className="flex-1 h-full">
+            <CodeEditor
               openFiles={openFiles}
-              language={
-                openFiles.find((file) => file.id === activeFileId)?.language ||
-                "typescript"
-              }
-              activeFile={activeFileId}
-              setActiveFile={setActiveFileId}
+              activeFileId={activeFileId}
+              setActiveFileId={setActiveFileId}
               setOpenFiles={setOpenFiles}
-              theme="vs-dark"
             />
-            <div className="flex-1 h-full">
-              <CodeEditor
-                openFiles={openFiles}
-                activeFileId={activeFileId}
-                setActiveFileId={setActiveFileId}
-                setOpenFiles={setOpenFiles}
-              />
-            </div>
           </div>
         </div>
-      </ReduxProvider>
+      </div>
     </main>
   );
 }
